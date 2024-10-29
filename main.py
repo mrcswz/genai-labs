@@ -28,10 +28,10 @@ app = Flask(__name__)
 # Initializing the Firebase client
 db = firestore.Client()
 
-# TODO: Instantiate a collection reference
+# Instantiate a collection reference
 collection = db.collection('food-safety')
 
-# TODO: Instantiate an embedding model here
+# Instantiate an embedding model here
 embedding_model = VertexAIEmbeddings(model_name="text-embedding-004")
 
 safety_config = [
@@ -41,7 +41,7 @@ safety_config = [
     )
 ]
 
-# TODO: Instantiate a Generative AI model here
+# Instantiate a Generative AI model here
 generation_config = {
     "temperature": 0,
 }
@@ -49,13 +49,10 @@ generation_config = {
 generative_model = GenerativeModel(
     "gemini-pro",
     generation_config=generation_config
-    )
+)
 
-# TODO: Implement this function to return relevant context
-# from your vector database
+# Return relevant context from your vector database
 def search_vector_database(query: str):
-
-    context = ""
 
     context = ""
 
@@ -72,18 +69,14 @@ def search_vector_database(query: str):
   
     context = [result.to_dict()['content'] for result in docs]
 
-    # Don't delete this logging statement.
     logging.info(
         context, extra={"labels": {"service": "cymbal-service", "component": "context"}}
     )
     return context
 
-# TODO: Implement this function to pass Gemini the context data,
-# generate a response, and return the response text.
+# Pass Gemini the context data, generate a response, and return the response text.
 def ask_gemini(question):
 
-    # 1. Create a prompt_template with instructions to the model
-    # to use provided context info to answer the question.
     prompt_template = """
     You are an AI assistant. Use the provided context to answer the question as accurately and concisely as possible.
     
@@ -92,14 +85,13 @@ def ask_gemini(question):
     
     Answer:
     """
+
     context = search_vector_database(question)
 
     formatted_prompt = prompt_template.format(question=question, context=context)
     
     response = generative_model.generate_content(formatted_prompt)
     
-#    response = "Not implemented."
-
     return response
 
 # The Home page route
